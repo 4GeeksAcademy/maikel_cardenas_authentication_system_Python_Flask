@@ -46,7 +46,56 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
-			}
+			},
+			login: async (email, password) => {
+				let resp = await fetch(apiUrl + "/login", {
+					method: "POST",
+					body: JSON.stringify({ email, password }),
+					headers: {
+						"Content-Type": "application/json",
+					},
+				});
+				if (!resp.ok) {
+					setStore({ token: null });
+					return false;
+				}
+				let data = await resp.json();
+				setStore({ token: data.token });
+				localStorage.setItem("token", data.token);
+				return true;
+			},
+			loadSession: async () => {
+				let storageToken = localStorage.getItem("token");
+				if (!storageToken) return;
+				setStore({ token: storageToken });
+				let resp = await fetch(apiUrl + "/private", {
+					headers: {
+						Authorization: "Bearer " + storageToken,
+					},
+				});
+				if (!resp.ok) {
+					setStore({ token: null });
+					localStorage.removeItem("token")
+					return false;
+				}
+				let data = await resp.json();
+				setStore({ userInfo: data });
+				return true;
+			},
+			logout: async () => {
+				let { token } = getStore();
+				let resp = await fetch(apiUrl + "/logout", {
+					method: "POST",
+					headers: {
+						"Authorization": "Bearer " + token
+					},
+				});
+				if (!resp.ok) return false;
+				setStore({ token: null, userInfo: null });
+				localStorage.removeItem("token");
+				return true;
+			},
+			
 		}
 	};
 };

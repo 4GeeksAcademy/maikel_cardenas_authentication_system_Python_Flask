@@ -1,3 +1,5 @@
+const apiUrl = process.env.BACKEND_URL;
+
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
@@ -13,7 +15,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			token: null,
+			userInfo:null
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -48,7 +52,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ demo: demo });
 			},
 			login: async (email, password) => {
-				let resp = await fetch(apiUrl + "/login", {
+				let resp = await fetch(apiUrl + "/api/login", {
 					method: "POST",
 					body: JSON.stringify({ email, password }),
 					headers: {
@@ -84,7 +88,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			},
 			logout: async () => {
 				let { token } = getStore();
-				let resp = await fetch(apiUrl + "/logout", {
+				let resp = await fetch(apiUrl + "/api/logout", {
 					method: "POST",
 					headers: {
 						"Authorization": "Bearer " + token

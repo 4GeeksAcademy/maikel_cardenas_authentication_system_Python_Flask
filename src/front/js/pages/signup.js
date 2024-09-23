@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+const apiUrl = process.env.BACKEND_URL;
 
 const Signup = () => {
     const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ const Signup = () => {
         e.preventDefault();
         const dataToSend = { email, password };
         try {
-            const response = await fetch("https://opulent-waddle-69vgjv9wj94gcrg57-3001.app.github.dev/api/signup", {
+            const response = await fetch(apiUrl + "/api/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -24,12 +25,14 @@ const Signup = () => {
                 body: JSON.stringify(dataToSend),
 
             });
+            console.log(response)
             const responseData = await response.json();
             if (response.ok) {
                 alert("Usuario creado");
             } else {
                 alert("Error al crear usuario");
             }
+            console.log (responseData)
         } catch (error) {
             console.error("error al realizar solicitud")
         }
@@ -55,6 +58,7 @@ const Signup = () => {
                                         className="form-control"
                                         id="email"
                                         value={email}
+                                        name="email"
                                         onChange={handleEmailChange}
                                         required
                                     />
@@ -67,6 +71,7 @@ const Signup = () => {
                                         type="password"
                                         className="form-control"
                                         id="password"
+                                        name="password"
                                         value={password}
                                         onChange={handlePasswordChange}
                                         required
